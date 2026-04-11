@@ -5,7 +5,7 @@ struct DashboardView: View {
     @State private var isShowingSettings = false
 
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack {
             if isShowingSettings {
                 SettingsView(client: client, isShowingSettings: $isShowingSettings)
                     .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
@@ -14,8 +14,8 @@ struct DashboardView: View {
                     .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .leading)))
             }
         }
-        .animation(.spring(response: 0.35, dampingFraction: 0.85), value: isShowingSettings)
-        .frame(width: 300, height: 380) // Reduced height to eliminate empty space
+        .animation(.spring(response: 0.35, dampingFraction: 0.9), value: isShowingSettings)
+        .frame(width: 300, height: 380)
         .background(VisualEffectView(material: .menu, blendingMode: .behindWindow))
     }
 }
@@ -50,20 +50,20 @@ struct MainDashboardContent: View {
                 HStack(spacing: 12) {
                     Button(action: { Task { await client.fetchData() } }) {
                         Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 11, weight: .bold))
+                            .font(.system(size: 12, weight: .bold))
                     }
                     .buttonStyle(.plain)
                     
                     Button(action: { isShowingSettings = true }) {
-                        Image(systemName: "gearshape.fill")
-                            .font(.system(size: 11, weight: .bold))
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 12, weight: .bold))
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .padding(.bottom, 12)
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 15)
 
             Divider().opacity(0.1)
 
@@ -75,7 +75,7 @@ struct MainDashboardContent: View {
                             HStack {
                                 Text(sub.plan.tier.uppercased())
                                     .font(.system(size: 9, weight: .black))
-                                    .padding(.horizontal, 5)
+                                    .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
                                     .background(Color.blue)
                                     .foregroundColor(.white)
@@ -87,7 +87,6 @@ struct MainDashboardContent: View {
                                     .font(.system(size: 12, weight: .bold))
                             }
                             
-                            // Improved Expiry Display
                             HStack(spacing: 4) {
                                 Image(systemName: "calendar.badge.clock")
                                     .font(.system(size: 10))
@@ -96,20 +95,20 @@ struct MainDashboardContent: View {
                             }
                             .foregroundColor(.secondary)
                         }
-                        .padding(12)
+                        .padding(14)
                         .background(Color.primary.opacity(0.04))
-                        .cornerRadius(10)
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.primary.opacity(0.05), lineWidth: 0.5))
+                        .cornerRadius(12)
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.primary.opacity(0.06), lineWidth: 1))
 
                         // Quotas Section
-                        VStack(spacing: 10) {
+                        VStack(spacing: 12) {
                             SectionHeader(title: "QUOTAS", icon: "chart.bar.fill")
                             QuotaRow(title: "5 Hour", quota: sub.quota5Hour)
                             QuotaRow(title: "7 Day", quota: sub.quota7Day)
                         }
-                        .padding(12)
+                        .padding(14)
                         .background(Color.primary.opacity(0.04))
-                        .cornerRadius(10)
+                        .cornerRadius(12)
                     }
 
                     HStack(spacing: 10) {
@@ -122,43 +121,208 @@ struct MainDashboardContent: View {
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(12)
+                        .padding(14)
                         .background(Color.primary.opacity(0.04))
-                        .cornerRadius(10)
+                        .cornerRadius(12)
                         
                         // Rate
                         VStack(alignment: .leading, spacing: 4) {
                             SectionHeader(title: "RATE", icon: "bolt.fill")
-                            if let flow = client.flowRate {
-                                Text("$\(String(format: "%.4f", flow.effectiveUsdPerFlow))")
+                            if let flow = flowRateValue {
+                                Text("$\(String(format: "%.4f", flow))")
                                     .font(.system(size: 16, weight: .bold, design: .monospaced))
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(12)
+                        .padding(14)
                         .background(Color.primary.opacity(0.04))
-                        .cornerRadius(10)
+                        .cornerRadius(12)
                     }
                 }
                 .padding(16)
             }
             
             if let error = client.errorMessage {
-                Text(error)
-                    .font(.system(size: 9))
-                    .foregroundColor(.red)
-                    .padding(.bottom, 8)
+                HStack(spacing: 4) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                    Text(error)
+                }
+                .font(.system(size: 9, weight: .medium))
+                .foregroundColor(.red.opacity(0.8))
+                .padding(.bottom, 12)
             }
         }
+    }
+    
+    private var flowRateValue: Double? {
+        client.flowRate?.effectiveUsdPerFlow
     }
     
     private func formatDate(_ dateStr: String) -> String {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         if let date = formatter.date(from: dateStr) {
-            return date.formatted(.dateTime.year().month().day().hour().minute())
+            return date.formatted(.dateTime.year().month().day())
         }
         return dateStr
+    }
+}
+
+struct SettingsView: View {
+    @ObservedObject var client: ZenMuxClient
+    @Binding var isShowingSettings: Bool
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            HStack {
+                Button(action: { isShowingSettings = false }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+                
+                Spacer()
+                Text("Settings")
+                    .font(.system(size: 14, weight: .bold))
+                Spacer()
+                
+                // Balance space
+                Color.clear.frame(width: 20)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 15)
+            
+            Divider().opacity(0.1)
+
+            VStack(spacing: 24) {
+                // API Key Group
+                SettingsGroup(title: "AUTHENTICATION", icon: "key.fill") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        SecureField("Management API Key", text: $client.apiKey)
+                            .textFieldStyle(.plain)
+                            .padding(8)
+                            .background(Color.primary.opacity(0.05))
+                            .cornerRadius(6)
+                        
+                        Text("Obtain this key from your ZenMux dashboard.")
+                            .font(.system(size: 9))
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                // Preferences Group
+                SettingsGroup(title: "PREFERENCES", icon: "gearshape.2.fill") {
+                    VStack(spacing: 12) {
+                        SettingsRow(label: "Refresh Every", icon: "timer") {
+                            Picker("", selection: $client.refreshInterval) {
+                                Text("1m").tag(1.0)
+                                Text("5m").tag(5.0)
+                                Text("15m").tag(15.0)
+                                Text("30m").tag(30.0)
+                                Text("1h").tag(60.0)
+                            }
+                            .pickerStyle(.menu)
+                            .labelsHidden()
+                            .frame(width: 70)
+                            .onChange(of: client.refreshInterval) { _, _ in client.setupTimer() }
+                        }
+                        
+                        SettingsRow(label: "Status Label", icon: "dock.rectangle") {
+                            Picker("", selection: $client.displayType) {
+                                ForEach(MenuBarDisplayType.allCases, id: \.self) { type in
+                                    Text(type.rawValue).tag(type)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .labelsHidden()
+                            .frame(width: 100)
+                        }
+                    }
+                }
+                
+                Spacer()
+                
+                Button(action: { isShowingSettings = false }) {
+                    Text("Done")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(20)
+        }
+    }
+}
+
+// MARK: - Settings Components
+struct SettingsGroup<Content: View>: View {
+    let title: String
+    let icon: String
+    let content: Content
+    
+    init(title: String, icon: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.icon = icon
+        self.content = content()
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 10))
+                Text(title)
+                    .font(.system(size: 10, weight: .black))
+            }
+            .foregroundColor(.secondary.opacity(0.8))
+            
+            content
+        }
+    }
+}
+
+struct SettingsRow<Content: View>: View {
+    let label: String
+    let icon: String
+    let content: Content
+    
+    init(label: String, icon: String, @ViewBuilder content: () -> Content) {
+        self.label = label
+        self.icon = icon
+        self.content = content()
+    }
+    
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+                .font(.system(size: 12))
+                .foregroundColor(.blue.opacity(0.8))
+                .frame(width: 16)
+            Text(label)
+                .font(.system(size: 12, weight: .medium))
+            Spacer()
+            content
+        }
+    }
+}
+
+// MARK: - Original Helper Views
+struct SectionHeader: View {
+    let title: String
+    let icon: String
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon).font(.system(size: 8))
+            Text(title).font(.system(size: 9, weight: .black))
+        }
+        .foregroundColor(.secondary.opacity(0.7))
     }
 }
 
@@ -191,81 +355,6 @@ struct QuotaRow: View {
             return date.formatted(.dateTime.month().day().hour().minute())
         }
         return dateStr
-    }
-}
-
-struct SettingsView: View {
-    @ObservedObject var client: ZenMuxClient
-    @Binding var isShowingSettings: Bool
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Button(action: { isShowingSettings = false }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 12, weight: .bold))
-                }
-                .buttonStyle(.plain)
-                Spacer()
-                Text("Preferences").font(.system(size: 12, weight: .bold))
-                Spacer()
-                Color.clear.frame(width: 20)
-            }
-            .padding(16)
-            
-            Divider()
-
-            ScrollView {
-                VStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("MANAGEMENT API KEY").font(.system(size: 9, weight: .bold)).foregroundColor(.secondary)
-                        SecureField("sk-mg-v1-...", text: $client.apiKey)
-                            .textFieldStyle(.roundedBorder)
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("REFRESH INTERVAL").font(.system(size: 9, weight: .bold)).foregroundColor(.secondary)
-                        Picker("", selection: $client.refreshInterval) {
-                            Text("1 minute").tag(1.0)
-                            Text("15 minutes").tag(15.0)
-                            Text("1 hour").tag(60.0)
-                        }
-                        .pickerStyle(.menu)
-                        .labelsHidden()
-                        .onChange(of: client.refreshInterval) { _, _ in client.setupTimer() }
-                    }
-
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("MENU BAR STYLE").font(.system(size: 9, weight: .bold)).foregroundColor(.secondary)
-                        Picker("", selection: $client.displayType) {
-                            ForEach(MenuBarDisplayType.allCases, id: \.self) { Text($0.rawValue).tag($0) }
-                        }
-                        .pickerStyle(.menu)
-                        .labelsHidden()
-                    }
-                }
-                .padding(16)
-            }
-            
-            Divider()
-
-            Button("Done") { isShowingSettings = false }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.regular)
-                .padding(12)
-        }
-    }
-}
-
-struct SectionHeader: View {
-    let title: String
-    let icon: String
-    var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: icon).font(.system(size: 8))
-            Text(title).font(.system(size: 9, weight: .black))
-        }
-        .foregroundColor(.secondary.opacity(0.7))
     }
 }
 
