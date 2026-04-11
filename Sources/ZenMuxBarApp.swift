@@ -22,7 +22,7 @@ struct ZenMuxBarApp: App {
                     }
                 } else if client.displayType == .subscription {
                     if let sub = client.subscriptionDetail {
-                        Text("\(Int(sub.quota5Hour.usagePercentage * 100))%")
+                        Text("\(Int((sub.quota5Hour?.usagePercentage ?? 0) * 100))%")
                             .font(.system(.caption, design: .monospaced))
                             .fontWeight(.bold)
                     }

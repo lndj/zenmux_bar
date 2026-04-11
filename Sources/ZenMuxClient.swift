@@ -12,7 +12,28 @@ enum ZenMuxError: Error {
     case invalidURL
     case noApiKey
     case requestFailed(Int)
+    case apiError(String)
     case decodingError(Error)
+    case missingData(String)
+}
+
+extension ZenMuxError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL:
+            return "Request URL is invalid."
+        case .noApiKey:
+            return "API Key not set."
+        case .requestFailed(let statusCode):
+            return "Request failed with status code \(statusCode)."
+        case .apiError(let message):
+            return message
+        case .decodingError(let error):
+            return "Failed to parse server response: \(error.localizedDescription)"
+        case .missingData(let endpoint):
+            return "Response from \(endpoint) does not contain expected data."
+        }
+    }
 }
 
 @MainActor
@@ -54,7 +75,7 @@ class ZenMuxClient: ObservableObject {
 
     func fetchData() async {
         guard !apiKey.isEmpty else {
-            self.errorMessage = "API Key not set"
+            self.errorMessage = ZenMuxError.noApiKey.localizedDescription
             return
         }
 
@@ -102,9 +123,35 @@ class ZenMuxClient: ObservableObject {
         
         do {
             let result = try JSONDecoder().decode(ZenMuxResponse<T>.self, from: data)
-            return result.data
+            if result.success == false {
+                let message = result.message ?? "Server returned an error for \(endpoint)."
+                throw ZenMuxError.apiError(message)
+            }
+            guard let payload = result.data else {
+                throw ZenMuxError.missingData(endpoint)
+            }
+            return payload
         } catch {
-            throw ZenMuxError.decodingError(error)
+            if let zenMuxError = error as? ZenMuxError {
+                throw zenMuxError
+            }
+
+            if let apiError = try? JSONDecoder().decode(ZenMuxAPIErrorResponse.self, from: data) {
+                let message = apiError.message ?? apiError.error
+                if let message, !message.isEmpty {
+                    throw ZenMuxError.apiError(message)
+                }
+            }
+
+            let bodyPreview = String(data: data, encoding: .utf8)?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .prefix(220) ?? ""
+            let detail = NSError(
+                domain: "ZenMux.Decoding",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "Endpoint: \(endpoint), Body: \(bodyPreview)"]
+            )
+            throw ZenMuxError.decodingError(detail)
         }
     }
 }

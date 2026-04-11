@@ -108,8 +108,12 @@ struct MainDashboardContent: View {
                         // Quotas Section
                         VStack(spacing: 12) {
                             SectionHeader(title: "QUOTAS", icon: "chart.bar.fill")
-                            QuotaRow(title: "5 Hour", quota: sub.quota5Hour)
-                            QuotaRow(title: "7 Day", quota: sub.quota7Day)
+                            if let quota5Hour = sub.quota5Hour {
+                                QuotaRow(title: "5 Hour", quota: quota5Hour)
+                            }
+                            if let quota7Day = sub.quota7Day {
+                                QuotaRow(title: "7 Day", quota: quota7Day)
+                            }
                         }
                         .padding(14)
                         .background(Color.primary.opacity(0.04))
@@ -353,7 +357,8 @@ struct QuotaRow: View {
         }
     }
     
-    private func formatShortTime(_ dateStr: String) -> String {
+    private func formatShortTime(_ dateStr: String?) -> String {
+        guard let dateStr, !dateStr.isEmpty else { return "-" }
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         if let date = formatter.date(from: dateStr) {

@@ -2,7 +2,14 @@ import Foundation
 
 struct ZenMuxResponse<T: Codable>: Codable {
     let success: Bool
-    let data: T
+    let data: T?
+    let message: String?
+}
+
+struct ZenMuxAPIErrorResponse: Codable {
+    let success: Bool?
+    let message: String?
+    let error: String?
 }
 
 // MARK: - Subscription
@@ -12,9 +19,9 @@ struct SubscriptionDetail: Codable {
     let baseUsdPerFlow: Double
     let effectiveUsdPerFlow: Double
     let accountStatus: String
-    let quota5Hour: Quota
-    let quota7Day: Quota
-    let quotaMonthly: QuotaMonthly
+    let quota5Hour: Quota?
+    let quota7Day: Quota?
+    let quotaMonthly: QuotaMonthly?
 
     enum CodingKeys: String, CodingKey {
         case plan, currency
@@ -43,7 +50,7 @@ struct Plan: Codable {
 
 struct Quota: Codable {
     let usagePercentage: Double
-    let resetsAt: String
+    let resetsAt: String?
     let maxFlows: Double
     let usedFlows: Double
     let remainingFlows: Double
