@@ -8,15 +8,15 @@ struct DashboardView: View {
         VStack(spacing: 0) {
             if isShowingSettings {
                 SettingsView(client: client, isShowingSettings: $isShowingSettings)
-                    .transition(.move(edge: .trailing))
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
             } else {
                 MainDashboardContent(client: client, isShowingSettings: $isShowingSettings)
-                    .transition(.move(edge: .leading))
+                    .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .leading)))
             }
         }
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isShowingSettings)
-        .frame(width: 320, height: 460)
-        .background(VisualEffectView(material: .sidebar, blendingMode: .behindWindow))
+        .animation(.spring(response: 0.35, dampingFraction: 0.85), value: isShowingSettings)
+        .frame(width: 300, height: 380) // Reduced height to eliminate empty space
+        .background(VisualEffectView(material: .menu, blendingMode: .behindWindow))
     }
 }
 
@@ -28,31 +28,38 @@ struct MainDashboardContent: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text("ZenMux")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("ZenMux")
+                        .font(.system(size: 16, weight: .black, design: .rounded))
+                    if let last = client.lastUpdated {
+                        Text("Updated \(last.formatted(.dateTime.hour().minute()))")
+                            .font(.system(size: 9))
+                            .foregroundColor(.secondary)
+                    }
+                }
                 
                 if client.isLoading {
                     ProgressView()
-                        .scaleEffect(0.5)
-                        .frame(width: 20, height: 20)
+                        .scaleEffect(0.4)
+                        .frame(width: 16, height: 16)
+                        .padding(.leading, 4)
                 }
                 
                 Spacer()
                 
-                Button(action: { Task { await client.fetchData() } }) {
-                    Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 12, weight: .bold))
+                HStack(spacing: 12) {
+                    Button(action: { Task { await client.fetchData() } }) {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 11, weight: .bold))
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button(action: { isShowingSettings = true }) {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 11, weight: .bold))
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
-                .help("Refresh now")
-                
-                Button(action: { isShowingSettings = true }) {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 12, weight: .bold))
-                }
-                .buttonStyle(.plain)
-                .padding(.leading, 8)
-                .help("Settings")
             }
             .padding(.horizontal, 16)
             .padding(.top, 16)
@@ -61,93 +68,87 @@ struct MainDashboardContent: View {
             Divider().opacity(0.1)
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 14) {
+                VStack(spacing: 12) {
                     if let sub = client.subscriptionDetail {
-                        // Plan Highlight
-                        VStack(alignment: .leading, spacing: 8) {
+                        // Compact Plan Card
+                        VStack(alignment: .leading, spacing: 10) {
                             HStack {
                                 Text(sub.plan.tier.uppercased())
-                                    .font(.system(size: 10, weight: .black))
-                                    .padding(.horizontal, 6)
+                                    .font(.system(size: 9, weight: .black))
+                                    .padding(.horizontal, 5)
                                     .padding(.vertical, 2)
-                                    .background(Color.blue.opacity(0.2))
-                                    .foregroundColor(.blue)
+                                    .background(Color.blue)
+                                    .foregroundColor(.white)
                                     .cornerRadius(4)
+                                
                                 Spacer()
-                                Text("Expires: \(formatDate(sub.plan.expiresAt))")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.secondary)
+                                
+                                Text("$\(Int(sub.plan.amountUsd))/\(sub.plan.interval)")
+                                    .font(.system(size: 12, weight: .bold))
                             }
                             
-                            HStack(alignment: .lastTextBaseline, spacing: 2) {
-                                Text("$\(Int(sub.plan.amountUsd))")
-                                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                                Text("/\(sub.plan.interval)")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+                            // Improved Expiry Display
+                            HStack(spacing: 4) {
+                                Image(systemName: "calendar.badge.clock")
+                                    .font(.system(size: 10))
+                                Text("Expires: \(formatDate(sub.plan.expiresAt))")
+                                    .font(.system(size: 10, weight: .medium))
                             }
+                            .foregroundColor(.secondary)
                         }
-                        .padding(14)
-                        .background(Color.primary.opacity(0.03))
-                        .cornerRadius(12)
+                        .padding(12)
+                        .background(Color.primary.opacity(0.04))
+                        .cornerRadius(10)
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.primary.opacity(0.05), lineWidth: 0.5))
 
                         // Quotas Section
-                        VStack(spacing: 12) {
-                            SectionHeader(title: "Usage Quotas", icon: "chart.bar.fill")
+                        VStack(spacing: 10) {
+                            SectionHeader(title: "QUOTAS", icon: "chart.bar.fill")
                             QuotaRow(title: "5 Hour", quota: sub.quota5Hour)
                             QuotaRow(title: "7 Day", quota: sub.quota7Day)
                         }
-                        .padding(14)
-                        .background(Color.primary.opacity(0.03))
-                        .cornerRadius(12)
+                        .padding(12)
+                        .background(Color.primary.opacity(0.04))
+                        .cornerRadius(10)
                     }
 
-                    HStack(spacing: 12) {
+                    HStack(spacing: 10) {
+                        // Balance
                         VStack(alignment: .leading, spacing: 4) {
-                            SectionHeader(title: "PAYG", icon: "dollarsign.circle.fill")
+                            SectionHeader(title: "CREDITS", icon: "dollarsign.circle.fill")
                             if let payg = client.paygBalance {
                                 Text("$\(String(format: "%.3f", payg.totalCredits))")
-                                    .font(.system(size: 18, weight: .bold, design: .monospaced))
+                                    .font(.system(size: 16, weight: .bold, design: .monospaced))
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(14)
-                        .background(Color.primary.opacity(0.03))
-                        .cornerRadius(12)
+                        .padding(12)
+                        .background(Color.primary.opacity(0.04))
+                        .cornerRadius(10)
                         
+                        // Rate
                         VStack(alignment: .leading, spacing: 4) {
-                            SectionHeader(title: "Flow Rate", icon: "bolt.fill")
+                            SectionHeader(title: "RATE", icon: "bolt.fill")
                             if let flow = client.flowRate {
                                 Text("$\(String(format: "%.4f", flow.effectiveUsdPerFlow))")
-                                    .font(.system(size: 18, weight: .bold, design: .monospaced))
+                                    .font(.system(size: 16, weight: .bold, design: .monospaced))
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(14)
-                        .background(Color.primary.opacity(0.03))
-                        .cornerRadius(12)
+                        .padding(12)
+                        .background(Color.primary.opacity(0.04))
+                        .cornerRadius(10)
                     }
                 }
                 .padding(16)
             }
-
-            // Footer
-            HStack {
-                if let last = client.lastUpdated {
-                    Text("Updated \(last.formatted(.relative(presentation: .named)))")
-                        .font(.system(size: 9))
-                        .foregroundColor(.secondary)
-                }
-                Spacer()
-                if let error = client.errorMessage {
-                    Image(systemName: "exclamationmark.circle.fill")
-                        .foregroundColor(.red)
-                        .help(error)
-                }
+            
+            if let error = client.errorMessage {
+                Text(error)
+                    .font(.system(size: 9))
+                    .foregroundColor(.red)
+                    .padding(.bottom, 8)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(Color.primary.opacity(0.02))
         }
     }
     
@@ -155,10 +156,7 @@ struct MainDashboardContent: View {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         if let date = formatter.date(from: dateStr) {
-            let displayFormatter = DateFormatter()
-            displayFormatter.dateStyle = .medium
-            displayFormatter.timeStyle = .none
-            return displayFormatter.string(from: date)
+            return date.formatted(.dateTime.year().month().day().hour().minute())
         }
         return dateStr
     }
@@ -168,27 +166,31 @@ struct QuotaRow: View {
     let title: String
     let quota: Quota
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(title).font(.system(size: 11, weight: .medium))
-                
-                // Added Percentage here
-                Text("\(String(format: "%.1f", quota.usagePercentage * 100))%")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundColor(quota.usagePercentage > 0.8 ? .orange : .blue)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 1)
-                    .background(Color.primary.opacity(0.05))
-                    .cornerRadius(3)
-
+        VStack(alignment: .leading, spacing: 5) {
+            HStack {
+                Text(title).font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)
                 Spacer()
-                
-                Text("\(Int(quota.usedFlows))/\(Int(quota.maxFlows))")
-                    .font(.system(size: 10, design: .monospaced))
-                    .foregroundColor(.secondary)
+                Text("\(String(format: "%.1f", quota.usagePercentage * 100))%")
+                    .font(.system(size: 10, weight: .heavy))
+                    .foregroundColor(quota.usagePercentage > 0.8 ? .orange : .blue)
             }
             CustomProgressView(value: quota.usagePercentage)
+            HStack {
+                Text("Used \(Int(quota.usedFlows))/\(Int(quota.maxFlows))").font(.system(size: 8))
+                Spacer()
+                Text("Reset: \(formatShortTime(quota.resetsAt))").font(.system(size: 8))
+            }
+            .foregroundColor(.secondary.opacity(0.8))
         }
+    }
+    
+    private func formatShortTime(_ dateStr: String) -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = formatter.date(from: dateStr) {
+            return date.formatted(.dateTime.month().day().hour().minute())
+        }
+        return dateStr
     }
 }
 
@@ -198,104 +200,72 @@ struct SettingsView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header with Back Button
             HStack {
                 Button(action: { isShowingSettings = false }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                        Text("Back")
-                    }
-                    .font(.system(size: 13, weight: .medium))
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 12, weight: .bold))
                 }
                 .buttonStyle(.plain)
-                
                 Spacer()
-                
-                Text("Preferences")
-                    .font(.system(size: 13, weight: .bold))
-                
+                Text("Preferences").font(.system(size: 12, weight: .bold))
                 Spacer()
-                
-                // Placeholder to balance the layout
-                Color.clear.frame(width: 40)
+                Color.clear.frame(width: 20)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .padding(.bottom, 12)
+            .padding(16)
             
             Divider()
 
             ScrollView {
-                VStack(spacing: 20) {
-                    // Auth
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("AUTHENTICATION").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)
-                        SecureField("Management API Key", text: $client.apiKey)
+                VStack(spacing: 16) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("MANAGEMENT API KEY").font(.system(size: 9, weight: .bold)).foregroundColor(.secondary)
+                        SecureField("sk-mg-v1-...", text: $client.apiKey)
                             .textFieldStyle(.roundedBorder)
                     }
                     
-                    // Display & Sync
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("DISPLAY & SYNC").font(.system(size: 10, weight: .bold)).foregroundColor(.secondary)
-                        
-                        // Using a simple HStack + Picker with MenuStyle to avoid popover issues
-                        HStack {
-                            Text("Refresh Every").font(.system(size: 12))
-                            Spacer()
-                            Picker("", selection: $client.refreshInterval) {
-                                Text("1 min").tag(1.0)
-                                Text("5 mins").tag(5.0)
-                                Text("15 mins").tag(15.0)
-                                Text("30 mins").tag(30.0)
-                                Text("1 hour").tag(60.0)
-                            }
-                            .pickerStyle(.menu)
-                            .labelsHidden()
-                            .frame(width: 100)
-                            .onChange(of: client.refreshInterval) { _, _ in client.setupTimer() }
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("REFRESH INTERVAL").font(.system(size: 9, weight: .bold)).foregroundColor(.secondary)
+                        Picker("", selection: $client.refreshInterval) {
+                            Text("1 minute").tag(1.0)
+                            Text("15 minutes").tag(15.0)
+                            Text("1 hour").tag(60.0)
                         }
-                        
-                        HStack {
-                            Text("Menu Bar Style").font(.system(size: 12))
-                            Spacer()
-                            Picker("", selection: $client.displayType) {
-                                ForEach(MenuBarDisplayType.allCases, id: \.self) { type in
-                                    Text(type.rawValue).tag(type)
-                                }
-                            }
-                            .pickerStyle(.menu)
-                            .labelsHidden()
-                            .frame(width: 120)
-                        }
+                        .pickerStyle(.menu)
+                        .labelsHidden()
+                        .onChange(of: client.refreshInterval) { _, _ in client.setupTimer() }
                     }
-                    .padding(.top, 8)
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("MENU BAR STYLE").font(.system(size: 9, weight: .bold)).foregroundColor(.secondary)
+                        Picker("", selection: $client.displayType) {
+                            ForEach(MenuBarDisplayType.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                        }
+                        .pickerStyle(.menu)
+                        .labelsHidden()
+                    }
                 }
-                .padding(20)
+                .padding(16)
             }
             
             Divider()
 
             Button("Done") { isShowingSettings = false }
                 .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .padding(16)
+                .controlSize(.regular)
+                .padding(12)
         }
     }
 }
 
-// Keep helper views...
 struct SectionHeader: View {
     let title: String
     let icon: String
     var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.system(size: 10))
-                .foregroundColor(.blue)
-            Text(title)
-                .font(.system(size: 10, weight: .bold))
-                .foregroundColor(.secondary)
+        HStack(spacing: 4) {
+            Image(systemName: icon).font(.system(size: 8))
+            Text(title).font(.system(size: 9, weight: .black))
         }
+        .foregroundColor(.secondary.opacity(0.7))
     }
 }
 
@@ -304,33 +274,28 @@ struct CustomProgressView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(Color.primary.opacity(0.05))
-                    .frame(height: 5)
+                Capsule().fill(Color.primary.opacity(0.05)).frame(height: 4)
                 Capsule()
                     .fill(LinearGradient(colors: [.blue, .cyan], startPoint: .leading, endPoint: .trailing))
-                    .frame(width: geo.size.width * CGFloat(min(value, 1.0)), height: 5)
-                    .shadow(color: Color.blue.opacity(0.3), radius: 2, x: 0, y: 1)
+                    .frame(width: geo.size.width * CGFloat(min(value, 1.0)), height: 4)
             }
         }
-        .frame(height: 5)
+        .frame(height: 4)
     }
 }
 
 struct VisualEffectView: NSViewRepresentable {
     let material: NSVisualEffectView.Material
     let blendingMode: NSVisualEffectView.BlendingMode
-
     func makeNSView(context: Context) -> NSVisualEffectView {
-        let visualEffectView = NSVisualEffectView()
-        visualEffectView.material = material
-        visualEffectView.blendingMode = blendingMode
-        visualEffectView.state = .active
-        return visualEffectView
+        let view = NSVisualEffectView()
+        view.material = material
+        view.blendingMode = blendingMode
+        view.state = .active
+        return view
     }
-
-    func updateNSView(_ visualEffectView: NSVisualEffectView, context: Context) {
-        visualEffectView.material = material
-        visualEffectView.blendingMode = blendingMode
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+        nsView.material = material
+        nsView.blendingMode = blendingMode
     }
 }
