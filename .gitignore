@@ -1,0 +1,38 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+
+# Xcode
+build/
+DerivedData/
+*.xcworkspace
+xcuserdata/
+*.bundle
+*.xcuserstate
+project.xcworkspace/
+xcuserdata/
+UserInterfaceState.xcuserstate
+*.moved-aside
+*.xccheckout
+*.xcscheme
+!default.xcscheme
+*.xcconfig
+*.orig
+*.rej
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Local configuration
+.env
+.env.local
+.env.*.local
+
+# Backup files
+*.bak
+*.swp
+*~
