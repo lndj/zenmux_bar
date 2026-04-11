@@ -6,17 +6,23 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3B2C72E22F8A43F400C16252 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2C72DD2F8A43F400C16252 /* Models.swift */; };
+		3B2C72E32F8A43F400C16252 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2C72DC2F8A43F400C16252 /* DashboardView.swift */; };
+		3B2C72E42F8A43F400C16252 /* ZenMuxBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2C72DF2F8A43F400C16252 /* ZenMuxBarApp.swift */; };
+		3B2C72E52F8A43F400C16252 /* ZenMuxClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2C72E02F8A43F400C16252 /* ZenMuxClient.swift */; };
+		3B2C72E62F8A43F400C16252 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B2C72DB2F8A43F400C16252 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		3B2C72DB2F8A43F400C16252 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3B2C72DC2F8A43F400C16252 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		3B2C72DD2F8A43F400C16252 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		3B2C72DE2F8A43F400C16252 /* ZenMuxBar-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZenMuxBar-Bridging-Header.h"; sourceTree = "<group>"; };
+		3B2C72DF2F8A43F400C16252 /* ZenMuxBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZenMuxBarApp.swift; sourceTree = "<group>"; };
+		3B2C72E02F8A43F400C16252 /* ZenMuxClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZenMuxClient.swift; sourceTree = "<group>"; };
 		3B77D72F2F8A227F00C4F74C /* ZenMuxBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZenMuxBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		3B77D7312F8A227F00C4F74C /* ZenMuxBar */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ZenMuxBar;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		3B77D72C2F8A227F00C4F74C /* Frameworks */ = {
@@ -29,11 +35,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3B2C72E12F8A43F400C16252 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				3B2C72DB2F8A43F400C16252 /* Assets.xcassets */,
+				3B2C72DC2F8A43F400C16252 /* DashboardView.swift */,
+				3B2C72DD2F8A43F400C16252 /* Models.swift */,
+				3B2C72DE2F8A43F400C16252 /* ZenMuxBar-Bridging-Header.h */,
+				3B2C72DF2F8A43F400C16252 /* ZenMuxBarApp.swift */,
+				3B2C72E02F8A43F400C16252 /* ZenMuxClient.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
 		3B77D7262F8A227F00C4F74C = {
 			isa = PBXGroup;
 			children = (
-				3B77D7312F8A227F00C4F74C /* ZenMuxBar */,
 				3B77D7302F8A227F00C4F74C /* Products */,
+				3B2C72E12F8A43F400C16252 /* Sources */,
 			);
 			sourceTree = "<group>";
 		};
@@ -59,9 +78,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				3B77D7312F8A227F00C4F74C /* ZenMuxBar */,
 			);
 			name = ZenMuxBar;
 			packageProductDependencies = (
@@ -110,6 +126,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B2C72E62F8A43F400C16252 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,6 +137,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B2C72E22F8A43F400C16252 /* Models.swift in Sources */,
+				3B2C72E32F8A43F400C16252 /* DashboardView.swift in Sources */,
+				3B2C72E42F8A43F400C16252 /* ZenMuxBarApp.swift in Sources */,
+				3B2C72E52F8A43F400C16252 /* ZenMuxClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,7 +307,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "ZenMuxBar/ZenMuxBar-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/ZenMuxBar-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -333,7 +354,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "ZenMuxBar/ZenMuxBar-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/ZenMuxBar-Bridging-Header.h";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 			};

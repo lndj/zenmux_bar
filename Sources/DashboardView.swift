@@ -17,6 +17,11 @@ struct DashboardView: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.9), value: isShowingSettings)
         .frame(width: 300, height: 380)
         .background(VisualEffectView(material: .menu, blendingMode: .behindWindow))
+        .onAppear {
+            Task {
+                await client.fetchData()
+            }
+        }
     }
 }
 

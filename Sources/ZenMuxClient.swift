@@ -34,6 +34,9 @@ class ZenMuxClient: ObservableObject {
 
     init() {
         setupTimer()
+        Task {
+            await fetchData()
+        }
     }
 
     func setupTimer() {
