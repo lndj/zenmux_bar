@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct DashboardView: View {
     @ObservedObject var client: ZenMuxClient
@@ -95,7 +96,7 @@ struct MainDashboardContent: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "calendar.badge.clock")
                                     .font(.system(size: 10))
-                                Text("Expires: \(formatDate(sub.plan.expiresAt))")
+                                Text("Expires: \(ZenMuxDateFormatting.displayDate(sub.plan.expiresAt))")
                                     .font(.system(size: 10, weight: .medium))
                             }
                             .foregroundColor(.secondary)
@@ -167,14 +168,6 @@ struct MainDashboardContent: View {
         client.flowRate?.effectiveUsdPerFlow
     }
     
-    private func formatDate(_ dateStr: String) -> String {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let date = formatter.date(from: dateStr) {
-            return date.formatted(.dateTime.year().month().day())
-        }
-        return dateStr
-    }
 }
 
 struct SettingsView: View {
@@ -267,6 +260,8 @@ struct SettingsView: View {
             }
             .padding(20)
         }
+        .background(EscapeKeyHandler { isShowingSettings = false })
+        .onExitCommand { isShowingSettings = false }
     }
 }
 
@@ -351,21 +346,12 @@ struct QuotaRow: View {
             HStack {
                 Text("Used \(Int(quota.usedFlows))/\(Int(quota.maxFlows))").font(.system(size: 8))
                 Spacer()
-                Text("Reset: \(formatShortTime(quota.resetsAt))").font(.system(size: 8))
+                Text("Reset: \(ZenMuxDateFormatting.shortResetTime(quota.resetsAt))").font(.system(size: 8))
             }
             .foregroundColor(.secondary.opacity(0.8))
         }
     }
     
-    private func formatShortTime(_ dateStr: String?) -> String {
-        guard let dateStr, !dateStr.isEmpty else { return "-" }
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let date = formatter.date(from: dateStr) {
-            return date.formatted(.dateTime.month().day().hour().minute())
-        }
-        return dateStr
-    }
 }
 
 struct CustomProgressView: View {
@@ -396,5 +382,58 @@ struct VisualEffectView: NSViewRepresentable {
     func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
         nsView.material = material
         nsView.blendingMode = blendingMode
+    }
+}
+
+struct EscapeKeyHandler: NSViewRepresentable {
+    let onEscape: () -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onEscape: onEscape)
+    }
+
+    func makeNSView(context: Context) -> NSView {
+        context.coordinator.onEscape = onEscape
+        context.coordinator.start()
+        return NSView(frame: .zero)
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        context.coordinator.onEscape = onEscape
+        context.coordinator.start()
+    }
+
+    static func dismantleNSView(_ nsView: NSView, coordinator: Coordinator) {
+        coordinator.stop()
+    }
+
+    final class Coordinator {
+        var onEscape: () -> Void
+        private var monitor: Any?
+
+        init(onEscape: @escaping () -> Void) {
+            self.onEscape = onEscape
+        }
+
+        func start() {
+            guard monitor == nil else { return }
+
+            monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+                guard event.keyCode == 53 else { return event }
+                self?.onEscape()
+                return nil
+            }
+        }
+
+        func stop() {
+            if let monitor {
+                NSEvent.removeMonitor(monitor)
+                self.monitor = nil
+            }
+        }
+
+        deinit {
+            stop()
+        }
     }
 }

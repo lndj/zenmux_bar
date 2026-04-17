@@ -12,7 +12,18 @@
 		3B2C72E42F8A43F400C16252 /* ZenMuxBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2C72DF2F8A43F400C16252 /* ZenMuxBarApp.swift */; };
 		3B2C72E52F8A43F400C16252 /* ZenMuxClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2C72E02F8A43F400C16252 /* ZenMuxClient.swift */; };
 		3B2C72E62F8A43F400C16252 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B2C72DB2F8A43F400C16252 /* Assets.xcassets */; };
+		3B2C73102F8A600000C16252 /* ZenMuxBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2C730F2F8A600000C16252 /* ZenMuxBarTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3B2C73162F8A600000C16252 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B77D7272F8A227F00C4F74C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B77D72E2F8A227F00C4F74C;
+			remoteInfo = ZenMuxBar;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		3B2C72DB2F8A43F400C16252 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -21,11 +32,20 @@
 		3B2C72DE2F8A43F400C16252 /* ZenMuxBar-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZenMuxBar-Bridging-Header.h"; sourceTree = "<group>"; };
 		3B2C72DF2F8A43F400C16252 /* ZenMuxBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZenMuxBarApp.swift; sourceTree = "<group>"; };
 		3B2C72E02F8A43F400C16252 /* ZenMuxClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZenMuxClient.swift; sourceTree = "<group>"; };
+		3B2C730F2F8A600000C16252 /* ZenMuxBarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZenMuxBarTests.swift; sourceTree = "<group>"; };
+		3B2C73142F8A600000C16252 /* ZenMuxBarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZenMuxBarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B77D72F2F8A227F00C4F74C /* ZenMuxBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZenMuxBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		3B77D72C2F8A227F00C4F74C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B2C73122F8A600000C16252 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -53,13 +73,23 @@
 			children = (
 				3B77D7302F8A227F00C4F74C /* Products */,
 				3B2C72E12F8A43F400C16252 /* Sources */,
+				3B2C730E2F8A600000C16252 /* Tests */,
 			);
+			sourceTree = "<group>";
+		};
+		3B2C730E2F8A600000C16252 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				3B2C730F2F8A600000C16252 /* ZenMuxBarTests.swift */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		3B77D7302F8A227F00C4F74C /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				3B77D72F2F8A227F00C4F74C /* ZenMuxBar.app */,
+				3B2C73142F8A600000C16252 /* ZenMuxBarTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -86,6 +116,25 @@
 			productReference = 3B77D72F2F8A227F00C4F74C /* ZenMuxBar.app */;
 			productType = "com.apple.product-type.application";
 		};
+		3B2C73132F8A600000C16252 /* ZenMuxBarTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B2C73192F8A600000C16252 /* Build configuration list for PBXNativeTarget "ZenMuxBarTests" */;
+			buildPhases = (
+				3B2C73112F8A600000C16252 /* Sources */,
+				3B2C73122F8A600000C16252 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3B2C73172F8A600000C16252 /* PBXTargetDependency */,
+			);
+			name = ZenMuxBarTests;
+			packageProductDependencies = (
+			);
+			productName = ZenMuxBarTests;
+			productReference = 3B2C73142F8A600000C16252 /* ZenMuxBarTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -96,6 +145,10 @@
 				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
+					3B2C73132F8A600000C16252 = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = 3B77D72E2F8A227F00C4F74C;
+					};
 					3B77D72E2F8A227F00C4F74C = {
 						CreatedOnToolsVersion = 26.4;
 						LastSwiftMigration = 2640;
@@ -117,6 +170,7 @@
 			projectRoot = "";
 			targets = (
 				3B77D72E2F8A227F00C4F74C /* ZenMuxBar */,
+				3B2C73132F8A600000C16252 /* ZenMuxBarTests */,
 			);
 		};
 /* End PBXProject section */
@@ -144,7 +198,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3B2C73112F8A600000C16252 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B2C73102F8A600000C16252 /* ZenMuxBarTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3B2C73172F8A600000C16252 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3B77D72E2F8A227F00C4F74C /* ZenMuxBar */;
+			targetProxy = 3B2C73162F8A600000C16252 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3B77D7382F8A228000C4F74C /* Debug */ = {
@@ -360,6 +430,56 @@
 			};
 			name = Release;
 		};
+		3B2C731A2F8A600000C16252 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8Q3GS66Z8S;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = life.workfun.ZenMuxBarTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ZenMuxBar.app/Contents/MacOS/ZenMuxBar";
+				TEST_TARGET_NAME = ZenMuxBar;
+			};
+			name = Debug;
+		};
+		3B2C731B2F8A600000C16252 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8Q3GS66Z8S;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = life.workfun.ZenMuxBarTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ZenMuxBar.app/Contents/MacOS/ZenMuxBar";
+				TEST_TARGET_NAME = ZenMuxBar;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -377,6 +497,15 @@
 			buildConfigurations = (
 				3B77D73B2F8A228000C4F74C /* Debug */,
 				3B77D73C2F8A228000C4F74C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3B2C73192F8A600000C16252 /* Build configuration list for PBXNativeTarget "ZenMuxBarTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3B2C731A2F8A600000C16252 /* Debug */,
+				3B2C731B2F8A600000C16252 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

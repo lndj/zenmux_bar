@@ -7,7 +7,7 @@ A native macOS menu bar application to monitor your ZenMux subscription, quotas,
 - **Balance Tracking**: Check your PAYG credits (Total, Top-up, Bonus).
 - **Flow Rates**: Keep an eye on current base and effective flow rates.
 - **Beautiful UI**: SwiftUI-based design inspired by the macOS Weather app, featuring cards and progress bars.
-- **Secure**: Stores your Management API Key in `UserDefaults`.
+- **Secure**: Stores your Management API Key in Keychain.
 
 ## How to Run (Xcode)
 
@@ -35,5 +35,5 @@ A native macOS menu bar application to monitor your ZenMux subscription, quotas,
    - Go to Settings (gear icon) to paste your `ZENMUX_MANAGEMENT_API_KEY`.
 
 ## Requirements
-- macOS 13.0 (Ventura) or later (for `MenuBarExtra`).
-- Xcode 14.0 or later.
+- macOS 15.0 or later.
+- Xcode 26.4 or later.
