@@ -82,21 +82,31 @@ class ZenMuxClient: ObservableObject {
         self.isLoading = true
         self.errorMessage = nil
 
+        var lastError: Error?
+
         do {
-            async let sub = fetchSubscription()
-            async let balance = fetchPayGBalance()
-            async let flow = fetchFlowRate()
-
-            let (s, b, f) = try await (sub, balance, flow)
-
-            self.subscriptionDetail = s
-            self.paygBalance = b
-            self.flowRate = f
-            self.lastUpdated = Date()
-            self.isLoading = false
+            self.subscriptionDetail = try await fetchSubscription()
         } catch {
-            self.errorMessage = error.localizedDescription
-            self.isLoading = false
+            lastError = error
+        }
+
+        do {
+            self.paygBalance = try await fetchPayGBalance()
+        } catch {
+            lastError = error
+        }
+
+        do {
+            self.flowRate = try await fetchFlowRate()
+        } catch {
+            lastError = error
+        }
+
+        self.lastUpdated = Date()
+        self.isLoading = false
+
+        if self.subscriptionDetail == nil && self.paygBalance == nil && self.flowRate == nil {
+            self.errorMessage = lastError?.localizedDescription
         }
     }
 
