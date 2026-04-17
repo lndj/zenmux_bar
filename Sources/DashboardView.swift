@@ -257,6 +257,19 @@ struct SettingsView: View {
                         .cornerRadius(8)
                 }
                 .buttonStyle(.plain)
+
+                Button(action: { NSApplication.shared.terminate(nil) }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "power")
+                            .font(.system(size: 10))
+                        Text("Quit ZenMuxBar")
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+                }
+                .buttonStyle(.plain)
             }
             .padding(20)
         }
