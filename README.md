@@ -35,5 +35,5 @@ A native macOS menu bar application to monitor your ZenMux subscription, quotas,
    - Go to Settings (gear icon) to paste your `ZENMUX_MANAGEMENT_API_KEY`.
 
 ## Requirements
-- macOS 15.0 or later.
+- macOS 14.4 or later.
 - Xcode 26.4 or later.
